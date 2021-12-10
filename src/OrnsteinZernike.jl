@@ -1,5 +1,10 @@
 module OrnsteinZernike
 
-# Write your package code here.
+using LinearAlgebra
+using Krylov
+using LinearMaps
+using SparseDiffTools
+using FFTW
+using LineSearches
 
 end
