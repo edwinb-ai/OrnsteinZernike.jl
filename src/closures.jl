@@ -1,5 +1,6 @@
 abstract type Closure end
 
+@inline closure_relation(γ, br, u, r) = exp.(-u .+ γ .+ br) .- γ .- 1.0
 struct HypernettedChain <: Closure end
 
 struct PercusYevick <: Closure end
@@ -18,12 +19,8 @@ struct ConstantClosure{T<:Real} <: Closure
     a::T
 end
 
-@inline closure_relation(γ, br, u) = exp.(-u .+ γ .+ br) .- γ .- 1.0
-
-@inline closure_relation(γ, c::ConstantClosure, u) = closure_relation(γ, c.a, u)
-
-@inline closure_relation(γ, ::HypernettedChain, u, r) = closure_relation(γ, 0.0, u)
-
+@inline closure_relation(γ, ::HypernettedChain, u, r) = closure_relation(γ, 0.0, u, r)
+@inline closure_relation(γ, c::ConstantClosure, u, r) = closure_relation(γ, c.a, u, r)
 @inline closure_relation(γ, ::MeanSpherical, u, r) = -u
 
 function closure_relation(γ, ::SoftMeanSpherical, u, r)
@@ -74,7 +71,7 @@ function closure_relation(γ, cls::HMSA, u, r)
 end
 
 @inline function closure_relation(γ, ::PercusYevick, u, r)
-    return closure_relation(γ, -γ .+ log.(1.0 .+ γ), u)
+    return closure_relation(γ, -γ .+ log.(1.0 .+ γ), u, r)
 end
 
 @inline function closure_relation(γ, ::ModifiedVerlet, u, r)
@@ -83,33 +80,12 @@ end
     @inbounds for i in eachindex(γ)
         if γ[i] < 0.0
             new_br[i] = -0.5 * γ[i]^2
-            new_br[i] /= (1 - 0.8 * γ[i])
+            new_br[i] /= (1.0 - 0.8 * γ[i])
         else
             new_br[i] = -0.5 * γ[i]^2
-            new_br[i] /= (1 + 0.8 * γ[i])
+            new_br[i] /= (1.0 + 0.8 * γ[i])
         end
     end
 
-    return closure_relation(γ, new_br, u)
+    return closure_relation(γ, new_br, u, r)
 end
-
-closure_relation(γ, f::Function, u, r) = closure_relation(γ, f(γ), u)
-
-function mverlet(γ)
-    n = length(γ)
-    new_br = zeros(eltype(γ), n)
-
-    @inbounds for i in 1:n
-        if γ[i] < 0
-            new_br[i] = -0.5 * γ[i]^2
-            new_br[i] /= (1 - 0.8 * γ[i])
-        else
-            new_br[i] = -0.5 * γ[i]^2
-            new_br[i] /= (1 + 0.8 * γ[i])
-        end
-    end
-
-    return new_br
-end
-
-closure_relation(γ, m::Flux.Chain, u, r) = closure_relation(γ, m(r), u)
