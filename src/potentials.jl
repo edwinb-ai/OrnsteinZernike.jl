@@ -7,9 +7,9 @@ struct PseudoHS <: Potential
 end
 
 PseudoHS() = PseudoHS(pseudohs)
-PseudoHS(λ::Real) = PseudoHS((x) -> pseudohs(x; λ=λ))
+PseudoHS(λ=50.0) = PseudoHS((x) -> pseudohs(x, λ))
 
-function pseudohs(r; λ=50.0)
+function pseudohs(r, λ)
     # FIXME: This formula only applies for a 3D system
     dT = 1.4543 + 1.199 / (λ^1.0545)
     A = λ * (λ / (λ - 1.0))^(λ - 1.0)
@@ -52,9 +52,9 @@ struct SquareWell <: Potential
 end
 
 SquareWell() = SquareWell(square_well)
-SquareWell(λ::Real) = SquareWell((x) -> square_well(x; λ=λ))
+SquareWell(λ=1.5) = SquareWell((x) -> square_well(x, λ))
 
-function square_well(r; λ=1.5)
+function square_well(r, λ)
     uij = 0.0
 
     if r < 1.0
