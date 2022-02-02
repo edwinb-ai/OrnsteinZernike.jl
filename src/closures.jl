@@ -25,22 +25,19 @@ end
 
 function closure_relation(γ, ::SoftMeanSpherical, u, r)
     cr = similar(r)
-    u₁ = 0.0
-    u₂ = 0.0
+    u₁ = similar(u)
+    u₂ = similar(u)
 
-    for i in eachindex(r)
-        if r[i] < 1.0
-            u₁ = u[i]
-            u₂ = 0.0
-            cr[i] = exp(-u₁) * (1.0 + γ[i] - u₂)
-            cr[i] += -γ[i] - 1.0
-        else
-            u₁ = 0.0
-            u₂ = u[i]
-            cr[i] = exp(-u₁) * (1.0 + γ[i] - u₂)
-            cr[i] += -γ[i] - 1.0
-        end
-    end
+    less_one = r .< 1.0
+    larger_one = r .>= 1.0
+
+    u₁[less_one] = u[less_one]
+    u₁[larger_one] .= 0.0
+    u₂[less_one] .= 0.0
+    u₂[larger_one] .= u[larger_one]
+
+    @. cr[less_one] = exp(-u₁[less_one]) * (1.0 + γ[less_one] - u₂[less_one])
+    @. cr[larger_one] = exp(-u₁[larger_one]) * (1.0 + γ[larger_one] - u₂[larger_one])
 
     return cr
 end
