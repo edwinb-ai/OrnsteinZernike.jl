@@ -10,12 +10,12 @@ struct MeanSpherical <: Closure end
 
 struct SoftMeanSpherical <: Closure end
 
-struct HMSA <: Closure
-    α::Float64
+struct HMSA{T<:Real} <: Closure
+    α::T
 end
 
-struct ConstantClosure <: Closure
-    a::Real
+struct ConstantClosure{T<:Real} <: Closure
+    a::T
 end
 
 struct Parameters{T}
@@ -29,7 +29,7 @@ struct Parameters{T}
 end
 
 function Parameters(diam, rmax, ρ, mr::Integer, nr, ktemp)
-    d, rm, r, n = promote(diam, rmax, ρ, nr)
+    (d, rm, r, n) = promote(diam, rmax, ρ, nr)
 
     return Parameters{typeof(d)}(d, rm, r, mr, n, zero(typeof(d)), ktemp)
 end
@@ -58,7 +58,7 @@ struct Result{T<:AbstractArray}
 end
 
 function Result()
-    vecs = [zeros(2) for i in 1:5]
+    vecs = [zeros(2) for _ in 1:5]
     return Result{Vector{Float64}}(vecs...)
 end
 
@@ -68,11 +68,11 @@ function Result(cr, gam, st::Structure, params::Parameters)
     result_cr = copy(cr)
 
     # Next, we deal with the structure factor
-    # fits = continuous!(cr, st.r, params.diam)
+    fits = continuous!(cr, st.r, params.diam)
 
     r, p = make_fft_plan(cr)
     ck = fft_oz(cr, r, params.rmax, params.mr, p)
-    # remove_continuous!(ck, st.q, params.diam, fits)
+    remove_continuous!(ck, st.q, params.diam, fits)
 
     sq_inv = @. 1.0 - params.ρ * ck[2:end]
 
@@ -87,6 +87,4 @@ struct Interaction
     params::Parameters
     structure::Structure
     bridge::Closure
-
-    Interaction(p, s, b) = new(p, s, b)
 end

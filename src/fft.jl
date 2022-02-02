@@ -17,8 +17,7 @@ function fft_oz(f, r, rmax, nr, p)
     for i in 1:nr
         f[i] *= (i - 1)
     end
-    # @info "f in fft"
-    # display(f)
+
     result = _fft_with_plan(f, r, p)
 
     normalization = (4.0 * rmax^3) / nr^2
