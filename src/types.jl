@@ -34,7 +34,7 @@ function Parameters(diam, rmax, ρ, mr::Integer, nr, ktemp)
     return Parameters{typeof(d)}(d, rm, r, mr, n, zero(typeof(d)), ktemp)
 end
 
-struct Structure{T<:AbstractArray}
+struct Structure{T}
     r::T
     q::T
     pot::Potential
@@ -43,8 +43,8 @@ end
 function Structure(p::Parameters, pot::Potential)
     dr = p.rmax / p.mr
     dq = π / p.rmax
-    r = collect(range(0.0, (p.mr - 1) * dr; length=p.mr))
-    q = collect(range(0.0, (p.mr - 1) * dq; length=p.mr))
+    r = range(0.0, (p.mr - 1) * dr; length=p.mr)
+    q = range(0.0, (p.mr - 1) * dq; length=p.mr)
 
     return Structure{typeof(r)}(r, q, pot)
 end

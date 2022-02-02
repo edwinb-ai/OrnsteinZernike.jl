@@ -75,7 +75,8 @@ function build_solve_pairwise(x::AbstractMatrix, y::AbstractVector, r)
         difference_product[i] = inner_product(temp_product, r)
     end
 
-    result = solve_system(pairwise_product_matrix, difference_product)
+    # Solve the linear system
+    result = pairwise_product_matrix \ difference_product
 
     return result
 end
