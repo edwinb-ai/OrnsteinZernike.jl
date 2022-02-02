@@ -23,6 +23,14 @@ end
 @inline closure_relation(γ, c::ConstantClosure, u, r) = closure_relation(γ, c.a, u, r)
 @inline closure_relation(γ, ::MeanSpherical, u, r) = -u
 
+
+function _softmeanspherical!(cr, u1, u2, gamma, idxs)
+    @. cr[idxs] = exp(-u1[idxs]) * (1.0 + gamma[idxs] - u2[idxs])
+    @. cr[idxs] += -gamma[idxs] - 1.0
+
+    return nothing
+end
+
 function closure_relation(γ, ::SoftMeanSpherical, u, r)
     cr = similar(r)
     u₁ = similar(u)
@@ -31,38 +39,49 @@ function closure_relation(γ, ::SoftMeanSpherical, u, r)
     less_one = r .< 1.0
     larger_one = r .>= 1.0
 
-    u₁[less_one] = u[less_one]
+    u₁[less_one] .= u[less_one]
     u₁[larger_one] .= 0.0
     u₂[less_one] .= 0.0
     u₂[larger_one] .= u[larger_one]
 
-    @. cr[less_one] = exp(-u₁[less_one]) * (1.0 + γ[less_one] - u₂[less_one])
-    @. cr[larger_one] = exp(-u₁[larger_one]) * (1.0 + γ[larger_one] - u₂[larger_one])
+    _softmeanspherical!(cr, u₁, u₂, γ, less_one)
+    _softmeanspherical!(cr, u₁, u₂, γ, larger_one)
 
     return cr
 end
 
-function closure_relation(γ, cls::HMSA, u, r)
-    u₁ = 0.0
-    u₂ = 0.0
-    f_mix = 0.0
-    cr = similar(r)
+function _fmix!(fm, alpha, r, idxs)
+    @. fm[idxs] = 1.0 - exp(-alpha * r[idxs])
 
-    for i in eachindex(r)
-        if r[i] < 1.0
-            f_mix = 1.0 - exp(-cls.α * r[i])
-            u₁ = u[i]
-            u₂ = 0.0
-            cr[i] = exp(-u₁) * (1.0 + ((exp((γ[i] - u₂) * f_mix) - 1.0) / f_mix))
-            cr[i] += -γ[i] - 1.0
-        else
-            f_mix = 1.0 - exp(-cls.α * r[i])
-            u₁ = 0.0
-            u₂ = u[i]
-            cr[i] = exp(-u₁) * (1.0 + ((exp((γ[i] - u₂) * f_mix) - 1.0) / f_mix))
-            cr[i] += -γ[i] - 1.0
-        end
-    end
+    return nothing
+end
+
+function _hmsa(cr, u1, u2, gamma, fm, idxs)
+    @. cr[idxs] = exp(-u1) * (1.0 + ((exp((gamma[idxs] - u2) * fm) - 1.0) / fm))
+    @. cr[idxs] += -gamma[idxs] - 1.0
+
+    return nothing
+end
+
+function closure_relation(γ, cls::HMSA, u, r)
+    cr = similar(r)
+    f_mix = similar(r)
+    u₁ = similar(u)
+    u₂ = similar(u)
+
+    less_one = r .< 1.0
+    larger_one = r .>= 1.0
+
+    u₁[less_one] .= u[less_one]
+    u₁[larger_one] .= 0.0
+    u₂[less_one] .= 0.0
+    u₂[larger_one] .= u[larger_one]
+
+    _fmix!(f_mix, cls.α, r, less_one)
+    _fmix!(f_mix, cls.α, r, larger_one)
+
+    _hmsa(cr, u₁, u₂, γ, f_mix, less_one)
+    _hmsa(cr, u₁, u₂, γ, f_mix, larger_one)
 
     return cr
 end
