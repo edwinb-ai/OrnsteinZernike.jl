@@ -1,23 +1,3 @@
-abstract type Closure end
-
-struct HypernettedChain <: Closure end
-
-struct PercusYevick <: Closure end
-
-struct ModifiedVerlet <: Closure end
-
-struct MeanSpherical <: Closure end
-
-struct SoftMeanSpherical <: Closure end
-
-struct HMSA{T<:Real} <: Closure
-    α::T
-end
-
-struct ConstantClosure{T<:Real} <: Closure
-    a::T
-end
-
 struct Parameters{T}
     diam::T
     rmax::T
