@@ -1,4 +1,4 @@
-struct Parameters{T}
+mutable struct Parameters{T}
     diam::T
     rmax::T
     ρ::T

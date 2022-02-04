@@ -2,6 +2,7 @@ module OrnsteinZernike
 
 using LinearAlgebra
 using FFTW
+using Romberg
 
 include("potentials.jl")
 export Potential, PseudoHS, HardSphere, SmoothSW
