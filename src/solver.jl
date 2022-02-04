@@ -42,14 +42,13 @@ function oz_solve(st::Structure, γ, br, params::Parameters)
     ur = apply_potential(st.pot, st.r) ./ params.ktemp
     broadcast!(x -> isnan(x) ? 0.0 : x, ur, ur)
     cr = closure_relation(γ, br, ur, st.r)
-    # cr = closure_relation(γ, br, ur)
     broadcast!(x -> isnan(x) ? 0.0 : x, cr, cr)
 
-    # fits = continuous!(cr, st.r, params.diam)
+    fits = continuous!(cr, st.r, params.diam)
 
     r, p = make_fft_plan(cr)
     ck = fft_oz(cr, r, params.rmax, params.mr, p)
-    # remove_continuous!(ck, st.q, params.diam, fits)
+    remove_continuous!(ck, st.q, params.diam, fits)
 
     δ = @. 1.0 - params.δρ * ck
     γk = @. params.δρ * ck^2 / δ
@@ -58,7 +57,6 @@ function oz_solve(st::Structure, γ, br, params::Parameters)
     new_gamma = ifft_oz(γk, r, params.rmax, params.mr, p)
 
     cr = closure_relation(new_gamma, br, ur, st.r)
-    # cr = closure_relation(new_gamma, br, ur)
     broadcast!(x -> isnan(x) ? 0.0 : x, cr, cr)
 
     return cr, new_gamma
@@ -76,14 +74,12 @@ function build_solve_pairwise(x::AbstractMatrix, y::AbstractVector, r)
     end
 
     # Solve the linear system
-    result = pairwise_product_matrix \ difference_product
-
-    return result
+    return pairwise_product_matrix \ difference_product
 end
 
 function create_solution(coef::AbstractVector, gmat::AbstractMatrix)
     n = size(gmat, 1)
-    result = (1 - sum(coef)) .* gmat[end, :]
+    result = (1.0 - sum(coef)) .* gmat[end, :]
 
     for i in 1:(n - 1)
         @. result += coef[i] * gmat[n - i, :]

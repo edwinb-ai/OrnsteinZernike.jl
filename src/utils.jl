@@ -81,15 +81,15 @@ end
 
 function pairwise_inner_product(x::AbstractMatrix, dx::AbstractRange)
     n = size(x, 1)
-    result_matrix = similar(x)
+    result_matrix = zeros(eltype(x), (n, n))
 
     # First, deal with the diagonal
-    for i in eachindex(x)
+    for i in 1:n
         temp_prod = x[i, :] .* x[i, :]
         result_matrix[i, i] = inner_product(temp_prod, dx)
     end
 
-    for i in eachindex(x)
+    for i in 1:n
         for j in (i + 1):n
             temp_prod = x[i, :] .* x[j, :]
             result_matrix[i, j] = inner_product(temp_prod, dx)
