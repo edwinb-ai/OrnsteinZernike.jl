@@ -62,7 +62,7 @@ function differences_coefs!(cmat, dmat, y)
     end
 end
 
-function solve_to_precision(t::Interaction, cmat, dmat, gmat; prec=1e-3)
+function solve_to_precision(t::Interaction, cmat, dmat, gmat; prec=1e-5)
     new_prec = Inf
     view_gmat = gmat[2:end, :]
     last_diff = view_gmat[end, :] .- view_gmat[end - 1, :]
@@ -75,9 +75,6 @@ function solve_to_precision(t::Interaction, cmat, dmat, gmat; prec=1e-3)
         new_prec, diff_vector, g, cr = check_precision(t, fnew, t.structure.r)
         dmat[end, :] = diff_vector
         view_gmat[end, :] = g
-        if (new_prec - prec) < 0 # early stopping
-            break
-        end
         view_gmat = circshift(view_gmat, (-1, 0))
         dmat = circshift(dmat, (-1, 0))
         cr, view_gmat[end, :] = oz_solve(
