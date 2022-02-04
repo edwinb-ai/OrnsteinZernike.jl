@@ -5,7 +5,7 @@ using FFTW
 
 include("potentials.jl")
 export Potential, PseudoHS, HardSphere, SmoothSW
-include("types.jl")
+include("closures.jl")
 export HypernettedChain,
     PercusYevick,
     ModifiedVerlet,
@@ -17,9 +17,9 @@ export HypernettedChain,
     Structure,
     Result,
     Interaction
+include("types.jl")
 include("fft.jl")
 include("utils.jl")
-include("closures.jl")
 include("solver.jl")
 export solve
 
