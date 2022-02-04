@@ -17,7 +17,6 @@ export HypernettedChain,
     Structure,
     Result,
     Interaction
-
 include("fft.jl")
 include("utils.jl")
 include("closures.jl")
