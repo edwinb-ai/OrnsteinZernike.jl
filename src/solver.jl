@@ -1,43 +1,3 @@
-function oz_solve_cr(st::Structure, cr, params::Parameters)
-    fits = continuous!(cr, st.r, params.diam)
-
-    r, p = make_fft_plan(cr)
-    ck = fft_oz(cr, r, params.rmax, params.mr, p)
-    remove_continuous!(ck, st.q, params.diam, fits)
-
-    δ = @. 1.0 + params.δρ * ck
-    hk = @. ck / δ
-
-    fits = continuous!(hk, st.r, params.diam)
-    r, p = make_fft_plan(hk)
-    hr = ifft_oz(hk, r, params.rmax, params.mr, p)
-    remove_continuous!(hr, st.q, params.diam, fits)
-
-    broadcast!(x -> isnan(x) ? 0.0 : x, hr, hr)
-
-    return hr
-end
-
-function oz_solve_hr(st::Structure, hr, params::Parameters)
-    fits = continuous!(hr, st.r, params.diam)
-
-    r, p = make_fft_plan(hr)
-    hk = fft_oz(hr, r, params.rmax, params.mr, p)
-    remove_continuous!(hk, st.q, params.diam, fits)
-
-    δ = @. params.δρ * hk - 1.0
-    ck = @. hk / δ
-
-    fits = continuous!(ck, st.r, params.diam)
-    r, p = make_fft_plan(ck)
-    cr = ifft_oz(ck, r, params.rmax, params.mr, p)
-    remove_continuous!(cr, st.q, params.diam, fits)
-
-    broadcast!(x -> isnan(x) ? 0.0 : x, cr, cr)
-
-    return cr
-end
-
 function oz_solve(st::Structure, γ, br, params::Parameters)
     ur = apply_potential(st.pot, st.r) ./ params.ktemp
     broadcast!(x -> isnan(x) ? 0.0 : x, ur, ur)
@@ -102,7 +62,7 @@ function differences_coefs!(cmat, dmat, y)
     end
 end
 
-function solve_to_precision(t::Interaction, cmat, dmat, gmat; prec=1e-3)
+function solve_to_precision(t::Interaction, cmat, dmat, gmat; prec=1e-5)
     new_prec = Inf
     view_gmat = gmat[2:end, :]
     last_diff = view_gmat[end, :] .- view_gmat[end - 1, :]
@@ -115,9 +75,6 @@ function solve_to_precision(t::Interaction, cmat, dmat, gmat; prec=1e-3)
         new_prec, diff_vector, g, cr = check_precision(t, fnew, t.structure.r)
         dmat[end, :] = diff_vector
         view_gmat[end, :] = g
-        if (new_prec - prec) < 0 # early stopping
-            break
-        end
         view_gmat = circshift(view_gmat, (-1, 0))
         dmat = circshift(dmat, (-1, 0))
         cr, view_gmat[end, :] = oz_solve(
