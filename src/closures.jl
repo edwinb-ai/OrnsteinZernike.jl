@@ -22,13 +22,9 @@ end
 @inline closure_relation(γ, ::HypernettedChain, u, r) = closure_relation(γ, 0.0, u, r)
 @inline closure_relation(γ, c::ConstantClosure, u, r) = closure_relation(γ, c.a, u, r)
 function closure_relation(γ, ::MeanSpherical, u, r)
-    result = similar(r)
-    less_one = r .< 1.0
-    larger_one = r .>= 1.0
-    result[less_one] .= 1.0 .- γ[less_one]
-    result[larger_one] .= -u[larger_one]
-
-    return result
+    sr = @. γ - u
+    br = @. log(1.0 + sr) - sr
+    return closure_relation(γ, br, u, r)
 end
 
 function _softmeanspherical!(cr, u1, u2, gamma, idxs)
