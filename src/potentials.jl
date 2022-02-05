@@ -67,3 +67,15 @@ function square_well(r; λ=1.5)
 
     return uij
 end
+
+struct LennardJones <: Potential
+    f::Function
+    LennardJones() = new(lj)
+end
+
+function lj(r)
+    r6 = 1.0 / r^6
+    r12 = 1.0 / r^12
+
+    return 4.0 * (r12 - r6)
+end

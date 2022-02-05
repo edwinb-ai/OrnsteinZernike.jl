@@ -1,23 +1,20 @@
 function oz_solve(st::Structure, γ, br, params::Parameters)
     ur = apply_potential(st.pot, st.r) ./ params.ktemp
-    broadcast!(x -> isnan(x) ? 0.0 : x, ur, ur)
     cr = closure_relation(γ, br, ur, st.r)
-    broadcast!(x -> isnan(x) ? 0.0 : x, cr, cr)
 
     fits = continuous!(cr, st.r, params.diam)
 
-    r, p = make_fft_plan(cr)
+    (r, p) = make_fft_plan(cr)
     ck = fft_oz(cr, r, params.rmax, params.mr, p)
     remove_continuous!(ck, st.q, params.diam, fits)
 
     δ = @. 1.0 - params.δρ * ck
     γk = @. params.δρ * ck^2 / δ
 
-    r, p = make_fft_plan(γk)
+    (r, p) = make_fft_plan(γk)
     new_gamma = ifft_oz(γk, r, params.rmax, params.mr, p)
 
     cr = closure_relation(new_gamma, br, ur, st.r)
-    broadcast!(x -> isnan(x) ? 0.0 : x, cr, cr)
 
     return cr, new_gamma
 end
@@ -34,7 +31,6 @@ function build_solve_pairwise(x::AbstractMatrix, y::AbstractVector, r)
     end
 
     # Solve the linear system
-    # display(pairwise_product_matrix)
     return pairwise_product_matrix \ difference_product
 end
 
@@ -106,7 +102,7 @@ function ng_method!(t::Interaction, γ_matrix)
     end
     dif_matrix = diff(γ_matrix; dims=1)
 
-    n, m = size(dif_matrix)
+    (n, m) = size(dif_matrix)
     coeff_matrix = zeros(n - 1, m)
 
     cr = solve_to_precision(t, coeff_matrix, dif_matrix, γ_matrix)

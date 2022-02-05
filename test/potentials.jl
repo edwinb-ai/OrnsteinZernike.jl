@@ -1,7 +1,7 @@
 @testset "Square Well" begin
     rho = 0.8
-    nrho = 500
-    p = OrnsteinZernike.Parameters(1.0, 10.0, rho, 2^12, nrho, 1.0)
+    nrho = 50
+    p = OrnsteinZernike.Parameters(1.0, 8.0, rho, 2^8, nrho, 1.0)
     pot = OrnsteinZernike.SquareWell()
     st = OrnsteinZernike.Structure(p, pot)
     cls = OrnsteinZernike.HypernettedChain()
