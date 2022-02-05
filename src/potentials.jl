@@ -75,7 +75,7 @@ end
 
 function lj(r)
     r6 = 1.0 / r^6
-    r12 = 1.0 / r^12
+    r12 = r6 * r6
 
     return 4.0 * (r12 - r6)
 end

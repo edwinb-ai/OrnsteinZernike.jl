@@ -1,5 +1,7 @@
 abstract type Closure end
 
+# ! FIXME: Add a way to use external functions as a closure relation.
+
 @inline closure_relation(γ, br, u, r) = exp.(-u .+ γ .+ br) .- γ .- 1.0
 struct HypernettedChain <: Closure end
 

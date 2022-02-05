@@ -1,6 +1,8 @@
 function oz_solve(st::Structure, γ, br, params::Parameters)
     ur = apply_potential(st.pot, st.r) ./ params.ktemp
+    broadcast!(x -> isnan(x) ? 0.0 : x, ur, ur)
     cr = closure_relation(γ, br, ur, st.r)
+    broadcast!(x -> isnan(x) ? 0.0 : x, cr, cr)
 
     fits = continuous!(cr, st.r, params.diam)
 
@@ -15,6 +17,7 @@ function oz_solve(st::Structure, γ, br, params::Parameters)
     new_gamma = ifft_oz(γk, r, params.rmax, params.mr, p)
 
     cr = closure_relation(new_gamma, br, ur, st.r)
+    broadcast!(x -> isnan(x) ? 0.0 : x, cr, cr)
 
     return cr, new_gamma
 end
@@ -59,7 +62,7 @@ function differences_coefs!(cmat, dmat, y)
     end
 end
 
-function solve_to_precision(t::Interaction, cmat, dmat, gmat; prec=1e-3)
+function solve_to_precision(t::Interaction, cmat, dmat, gmat; prec=1e-4)
     new_prec = Inf
     view_gmat = gmat[2:end, :]
     last_diff = view_gmat[end, :] .- view_gmat[end - 1, :]

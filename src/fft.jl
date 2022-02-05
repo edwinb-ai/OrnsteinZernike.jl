@@ -35,7 +35,7 @@ function ifft_oz(f, r, rmax, nr, p)
 
     result = _fft_with_plan(f, r, p)
 
-    normalization = nr * (1.0 / 2.0 / rmax^3)
+    normalization = nr * (0.5 / rmax^3)
     for i in 2:nr
         result[i] *= normalization / (i - 1)
     end

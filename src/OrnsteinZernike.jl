@@ -5,7 +5,7 @@ using FFTW
 using Romberg
 
 include("potentials.jl")
-export Potential, PseudoHS, HardSphere, SquareWell
+export Potential, PseudoHS, HardSphere, SquareWell, LennardJones
 include("closures.jl")
 export HypernettedChain,
     PercusYevick,
