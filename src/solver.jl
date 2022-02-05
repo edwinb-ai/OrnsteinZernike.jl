@@ -34,6 +34,7 @@ function build_solve_pairwise(x::AbstractMatrix, y::AbstractVector, r)
     end
 
     # Solve the linear system
+    # display(pairwise_product_matrix)
     return pairwise_product_matrix \ difference_product
 end
 
@@ -62,7 +63,7 @@ function differences_coefs!(cmat, dmat, y)
     end
 end
 
-function solve_to_precision(t::Interaction, cmat, dmat, gmat; prec=1e-5)
+function solve_to_precision(t::Interaction, cmat, dmat, gmat; prec=1e-3)
     new_prec = Inf
     view_gmat = gmat[2:end, :]
     last_diff = view_gmat[end, :] .- view_gmat[end - 1, :]

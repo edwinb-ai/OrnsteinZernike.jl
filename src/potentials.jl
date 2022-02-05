@@ -58,11 +58,11 @@ function square_well(r; λ=1.5)
     uij = 0.0
 
     if r < 1.0
-        ur = Inf
+        uij = Inf
     elseif 1.0 <= r < λ
-        ur = -1.0
+        uij = -1.0
     else
-        ur = 0.0
+        uij = 0.0
     end
 
     return uij
