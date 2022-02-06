@@ -3,7 +3,7 @@
     # in https://mmlapps.nist.gov/srs/LJ_PURE/md.htm
     rho = 0.84
     nrho = 200
-    p = OrnsteinZernike.Parameters(1.0, 2.5, rho, 2^12, nrho, 0.85)
+    p = OrnsteinZernike.Parameters(1.0, 2.5, rho, 2^11, nrho, 0.85)
     pot = OrnsteinZernike.LennardJones()
     st = OrnsteinZernike.Structure(p, pot)
     cls = OrnsteinZernike.HypernettedChain()
@@ -23,7 +23,7 @@ end
 @testset "Square Well" begin
     rho = 0.8
     nrho = 500
-    p = OrnsteinZernike.Parameters(1.0, 2.5, rho, 2^13, nrho, 1.0)
+    p = OrnsteinZernike.Parameters(1.0, 2.5, rho, 2^11, nrho, 1.0)
     pot = OrnsteinZernike.SquareWell()
     st = OrnsteinZernike.Structure(p, pot)
     cls = OrnsteinZernike.HypernettedChain()
