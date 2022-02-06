@@ -17,6 +17,7 @@
         first_contact = maximum(result.gr)
     end
     @show first_contact
+    # We don't know exactly the value at contact, so just check that it is a valid number
     @test first_contact isa Real
 end
 
@@ -37,5 +38,6 @@ end
         first_contact = maximum(result.gr)
     end
     @show first_contact
+    # We don't know exactly the value at contact, so just check that it is a valid number
     @test first_contact isa Real
 end
