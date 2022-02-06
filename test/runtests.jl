@@ -5,4 +5,5 @@ using Test
     include("physicstests.jl")
     include("potentials.jl")
     include("closures.jl")
+    include("typetests.jl")
 end

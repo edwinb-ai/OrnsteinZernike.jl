@@ -9,12 +9,14 @@ struct PercusYevick <: Closure end
     return closure_relation(γ, -γ .+ log.(1.0 .+ γ), u, r)
 end
 
-mutable struct ModifiedVerlet{R} <: Closure
+struct ModifiedVerlet{R} <: Closure
     α::R
     β::R
 
-    ModifiedVerlet() = new{Float64}(-0.5, 0.8)
 end
+ModifiedVerlet() = ModifiedVerlet{Float64}(-0.5, 0.8)
+ModifiedVerlet(a::T, b::T) where {T<:Real} = ModifiedVerlet{T}(a, b)
+
 @inline function closure_relation(γ, c::ModifiedVerlet, u, r)
     new_br = similar(γ)
 

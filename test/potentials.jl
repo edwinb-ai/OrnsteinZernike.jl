@@ -12,7 +12,7 @@
 
     result = OrnsteinZernike.solve(inter)
     if 1.0 ∈ result.r
-        first_contact = result.gr[result.r.==1.0][1]
+        first_contact = result.gr[result.r .== 1.0][1]
     else
         first_contact = maximum(result.gr)
     end
@@ -33,7 +33,7 @@ end
 
     result = OrnsteinZernike.solve(inter)
     if 1.0 ∈ result.r
-        first_contact = result.gr[result.r.==1.0][1]
+        first_contact = result.gr[result.r .== 1.0][1]
     else
         first_contact = maximum(result.gr)
     end
@@ -42,22 +42,31 @@ end
     @test first_contact isa Real
 end
 
-@testset "Pseudo Hard Sphere" begin
+function phs_oz(pot)
     rho = 0.8
     nrho = 100
     p = OrnsteinZernike.Parameters(1.0, 6.0, rho, 2^11, nrho, 1.0)
-    pot = OrnsteinZernike.PseudoHS()
     st = OrnsteinZernike.Structure(p, pot)
     cls = OrnsteinZernike.ModifiedVerlet()
 
     inter = OrnsteinZernike.Interaction(p, st, cls)
 
-    result = OrnsteinZernike.solve(inter)
-    if 1.0 ∈ result.r
-        first_contact = result.gr[result.r.==1.0][1]
-    else
-        first_contact = maximum(result.gr)
+    return OrnsteinZernike.solve(inter)
+end
+
+@testset "Pseudo Hard Sphere" begin
+    potentials = Dict("50" => PseudoHS(), "51" => PseudoHS(51.0))
+
+    for (k, v) in potentials
+        @testset "$k" begin
+            result = phs_oz(v)
+            if 1.0 ∈ result.r
+                first_contact = result.gr[result.r .== 1.0][1]
+            else
+                first_contact = maximum(result.gr)
+            end
+            @show first_contact
+            @test first_contact isa Real
+        end
     end
-    @show first_contact
-    @test first_contact isa Real
 end
