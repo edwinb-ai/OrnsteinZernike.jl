@@ -4,12 +4,12 @@ apply_potential(p::Potential, r) = p.f.(r)
 
 struct PseudoHS <: Potential
     f::Function
-    PseudoHS() = new(pseudohs)
 end
 
-PseudoHS(λ::Real) = PseudoHS((x) -> pseudohs(x; λ = λ))
+PseudoHS() = PseudoHS(pseudohs)
+PseudoHS(λ::Real) = PseudoHS((x) -> pseudohs(x; λ=λ))
 
-function pseudohs(r; λ = 50.0)
+function pseudohs(r; λ=50.0)
     # FIXME: This formula only applies for a 3D system
     dT = 1.4543 + 1.199 / (λ^1.0545)
     A = λ * (λ / (λ - 1.0))^(λ - 1.0)
@@ -49,12 +49,11 @@ end
 
 struct SquareWell <: Potential
     f::Function
-    SquareWell() = new(square_well)
 end
 
-SquareWell(λ::Real) = SquareWell((x) -> square_well(x; λ = λ))
+SquareWell(λ::Real) = SquareWell((x) -> square_well(x; λ=λ))
 
-function square_well(r; λ = 1.5)
+function square_well(r; λ=1.5)
     uij = 0.0
 
     if r < 1.0
@@ -70,6 +69,7 @@ end
 
 struct LennardJones <: Potential
     f::Function
+
     LennardJones() = new(lj)
 end
 

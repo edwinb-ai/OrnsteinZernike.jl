@@ -8,22 +8,22 @@ function continuous!(f, r, diam)
         end
     end
 
-    fpd = -274.0 * f[m+1] + 600.0 * f[m+2] - 600.0 * f[m+3]
-    fpd += 400.0 * f[m+4] - 150.0 * f[m+5] + 24.0 * f[m+6]
+    fpd = -274.0 * f[m + 1] + 600.0 * f[m + 2] - 600.0 * f[m + 3]
+    fpd += 400.0 * f[m + 4] - 150.0 * f[m + 5] + 24.0 * f[m + 6]
     fpd /= 120.0 * dr
 
-    fppd = 225.0 * f[m+1] - 770.0 * f[m+2] + 1070.0 * f[m+3]
-    fppd += -780.0 * f[m+4] + 305.0 * f[m+5] - 50.0 * f[m+6]
+    fppd = 225.0 * f[m + 1] - 770.0 * f[m + 2] + 1070.0 * f[m + 3]
+    fppd += -780.0 * f[m + 4] + 305.0 * f[m + 5] - 50.0 * f[m + 6]
     fppd /= 60.0 * dr^2
 
-    fd = fpd * (diam - r[m+1]) + f[m+1]
+    fd = fpd * (diam - r[m + 1]) + f[m + 1]
 
-    fpi = 274.0 * f[m] - 600.0 * f[m-1] + 600.0 * f[m-2]
-    fpi += -400.0 * f[m-3] + 150.0 * f[m-4] - 24.0 * f[m-5]
+    fpi = 274.0 * f[m] - 600.0 * f[m - 1] + 600.0 * f[m - 2]
+    fpi += -400.0 * f[m - 3] + 150.0 * f[m - 4] - 24.0 * f[m - 5]
     fpi /= 120.0 * dr
 
-    fppi = 225.0 * f[m] - 770.0 * f[m-1] + 1070.0 * f[m-2]
-    fppi += -780.0 * f[m-3] + 305.0 * f[m-4] - 50.0 * f[m-5]
+    fppi = 225.0 * f[m] - 770.0 * f[m - 1] + 1070.0 * f[m - 2]
+    fppi += -780.0 * f[m - 3] + 305.0 * f[m - 4] - 50.0 * f[m - 5]
     fppi /= 60.0 * dr^2
 
     fi = fpi * (diam - r[m]) + f[m]
@@ -34,7 +34,7 @@ function continuous!(f, r, diam)
     a1 = delfp - diam * delfpp
     a2 = delfpp / 2.0
 
-    for i = 1:m
+    for i in 1:m
         f[i] += a0 + a1 * r[i] + a2 * r[i]^2
     end
 
@@ -84,13 +84,13 @@ function pairwise_inner_product(x::AbstractMatrix, dx::AbstractRange)
     result_matrix = zeros(eltype(x), (n, n))
 
     # First, deal with the diagonal
-    for i = 1:n
+    for i in 1:n
         temp_prod = x[i, :] .* x[i, :]
         result_matrix[i, i] = inner_product(temp_prod, dx)
     end
 
-    for i = 1:n
-        for j = (i+1):n
+    for i in 1:n
+        for j in (i + 1):n
             temp_prod = x[i, :] .* x[j, :]
             result_matrix[i, j] = inner_product(temp_prod, dx)
             result_matrix[j, i] = result_matrix[i, j] # Fill in the symmetric part

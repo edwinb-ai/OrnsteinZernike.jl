@@ -23,8 +23,8 @@ end
 function Structure(p::Parameters, pot::Potential)
     dr = p.rmax / p.mr
     dq = π / p.rmax
-    r = range(0.0, (p.mr - 1) * dr; length = p.mr)
-    q = range(0.0, (p.mr - 1) * dq; length = p.mr)
+    r = range(0.0, (p.mr - 1) * dr; length=p.mr)
+    q = range(0.0, (p.mr - 1) * dq; length=p.mr)
 
     return Structure{typeof(r)}(r, q, pot)
 end
@@ -38,7 +38,7 @@ struct Result{T<:AbstractArray}
 end
 
 function Result()
-    vecs = [zeros(2) for _ = 1:5]
+    vecs = [zeros(2) for _ in 1:5]
     return Result{Vector{Float64}}(vecs...)
 end
 
