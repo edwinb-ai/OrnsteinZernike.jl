@@ -49,7 +49,6 @@ end
 
 struct SquareWell <: Potential
     f::Function
-    SquareWell() = new(square_well)
 end
 
 SquareWell(λ::Real) = SquareWell((x) -> square_well(x; λ=λ))
@@ -70,6 +69,7 @@ end
 
 struct LennardJones <: Potential
     f::Function
+
     LennardJones() = new(lj)
 end
 

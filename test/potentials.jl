@@ -21,25 +21,35 @@
     @test first_contact isa Real
 end
 
-@testset "Square Well" begin
+function sw_oz(pot)
     rho = 0.8
     nrho = 500
     p = OrnsteinZernike.Parameters(1.0, 2.5, rho, 2^11, nrho, 1.0)
-    pot = OrnsteinZernike.SquareWell()
     st = OrnsteinZernike.Structure(p, pot)
-    cls = OrnsteinZernike.HypernettedChain()
+    cls = OrnsteinZernike.MeanSpherical()
 
     inter = OrnsteinZernike.Interaction(p, st, cls)
 
     result = OrnsteinZernike.solve(inter)
-    if 1.0 ∈ result.r
-        first_contact = result.gr[result.r .== 1.0][1]
-    else
-        first_contact = maximum(result.gr)
+
+    return result
+end
+
+@testset "Square Well" begin
+    potentials = Dict("1.5" => SquareWell(1.5), "1.3" => SquareWell(1.3))
+
+    for (k, v) in potentials
+        @testset "$k" begin
+            result = sw_oz(v)
+            if 1.0 ∈ result.r
+                first_contact = result.gr[result.r .== 1.0][1]
+            else
+                first_contact = maximum(result.gr)
+            end
+            @show "SW $k" first_contact
+            @test first_contact isa Real
+        end
     end
-    @show first_contact
-    # We don't know exactly the value at contact, so just check that it is a valid number
-    @test first_contact isa Real
 end
 
 function phs_oz(pot)
@@ -65,7 +75,7 @@ end
             else
                 first_contact = maximum(result.gr)
             end
-            @show first_contact
+            @show "PHS $k" first_contact
             @test first_contact isa Real
         end
     end
