@@ -14,9 +14,10 @@ end
     closures = Dict(
         "HNC" => HypernettedChain(),
         "MSA" => MeanSpherical(),
-        "MSA" => SoftMeanSpherical(),
+        "SMSA" => SoftMeanSpherical(),
         "HMSA" => HMSA(0.1),
         "PY" => PercusYevick(),
+        "MV" => ModifiedVerlet(),
     )
 
     for (k, v) in closures
