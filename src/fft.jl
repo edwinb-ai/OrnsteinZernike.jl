@@ -10,18 +10,18 @@ function _fft_with_plan(x, r, p)
     r[1:n] = x
     result = imag(conj!(p * r))
 
-    return result[1:(end - 1)]
+    return result[1:(end-1)]
 end
 
 function fft_oz(f, r, rmax, nr, p)
-    for i in 1:nr
+    for i = 1:nr
         f[i] *= (i - 1)
     end
 
     result = _fft_with_plan(f, r, p)
 
     normalization = (4.0 * rmax^3) / nr^2
-    for i in 2:nr
+    for i = 2:nr
         result[i] *= normalization / (i - 1)
     end
 
@@ -29,14 +29,14 @@ function fft_oz(f, r, rmax, nr, p)
 end
 
 function ifft_oz(f, r, rmax, nr, p)
-    for i in 1:nr
+    for i = 1:nr
         f[i] *= (i - 1)
     end
 
     result = _fft_with_plan(f, r, p)
 
-    normalization = nr * (1.0 / 2.0 / rmax^3)
-    for i in 2:nr
+    normalization = nr * (0.5 / rmax^3)
+    for i = 2:nr
         result[i] *= normalization / (i - 1)
     end
 
