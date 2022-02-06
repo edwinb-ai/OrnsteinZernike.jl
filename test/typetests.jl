@@ -8,7 +8,7 @@
     inter = OrnsteinZernike.Interaction(p, st, ModifiedVerlet(-0.6, 0.85))
     result = OrnsteinZernike.solve(inter)
     if 1.0 ∈ result.r
-        first_contact = result.gr[result.r.==1.0][1]
+        first_contact = result.gr[result.r .== 1.0][1]
     else
         first_contact = maximum(result.gr)
     end

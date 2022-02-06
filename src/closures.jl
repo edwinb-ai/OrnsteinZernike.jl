@@ -12,7 +12,6 @@ end
 struct ModifiedVerlet{R} <: Closure
     α::R
     β::R
-
 end
 ModifiedVerlet() = ModifiedVerlet{Float64}(-0.5, 0.8)
 ModifiedVerlet(a::T, b::T) where {T<:Real} = ModifiedVerlet{T}(a, b)
