@@ -10,11 +10,11 @@
 
     result = OrnsteinZernike.solve(inter)
     if 1.0 ∈ result.r
-        first_contact = result.gr[result.r .== 1.0][1]
+        first_contact = result.gr[result.r.==1.0][1]
     else
         first_contact = maximum(result.gr)
     end
     ground_truth = 3.47 # For Percus-Yevick, this is the best it can get
     @show first_contact
-    @test isapprox(first_contact, ground_truth; atol=0.01)
+    @test isapprox(first_contact, ground_truth; atol = 0.01)
 end
