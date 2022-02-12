@@ -1,7 +1,7 @@
 @testset "Parameters" begin
     brs = Dict(
         "Default" => ModifiedVerlet(),
-        "Three parameters" => ModifiedVerlet(-0.6, 0.85, 0.01)
+        "Three parameters" => ModifiedVerlet(-0.6, 0.01, 0.85)
     )
 
     for (k, v) in brs
