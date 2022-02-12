@@ -9,12 +9,13 @@ struct PercusYevick <: Closure end
     return closure_relation(γ, -γ .+ log.(1.0 .+ γ), u, r)
 end
 
-struct ModifiedVerlet{R} <: Closure
+struct ModifiedVerlet{R<:Real} <: Closure
     α::R
     β::R
+    λ::R
 end
-ModifiedVerlet() = ModifiedVerlet{Float64}(-0.5, 0.8)
-ModifiedVerlet(a::T, b::T) where {T<:Real} = ModifiedVerlet{T}(a, b)
+ModifiedVerlet() = ModifiedVerlet{Float64}(-0.5, 0.8, 0.0)
+ModifiedVerlet(a::T, b::T, c::T) where {T<:Real} = ModifiedVerlet{T}(a, b, c)
 
 @inline function closure_relation(γ, c::ModifiedVerlet, u, r)
     new_br = similar(γ)
@@ -33,6 +34,7 @@ ModifiedVerlet(a::T, b::T) where {T<:Real} = ModifiedVerlet{T}(a, b)
 end
 
 struct MeanSpherical <: Closure end
+
 function closure_relation(γ, ::MeanSpherical, u, r)
     cr = similar(r)
     less_one = r .< 1.0
@@ -74,6 +76,7 @@ end
 struct HMSA{T<:Real} <: Closure
     α::T
 end
+
 function _fmix!(fm, alpha, r, idxs)
     @. fm[idxs] = 1.0 - exp(-alpha * r[idxs])
 
