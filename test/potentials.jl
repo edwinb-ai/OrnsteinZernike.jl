@@ -23,8 +23,9 @@ end
 
 function sw_oz(pot)
     rho = 0.8
-    nrho = 500
-    p = OrnsteinZernike.Parameters(1.0, 2.5, rho, 2^11, nrho, 1.0)
+    nrho = 30
+    ktemp = 1.5
+    p = OrnsteinZernike.Parameters(1.0, 6.0, rho, 2^12, nrho, ktemp)
     st = OrnsteinZernike.Structure(p, pot)
     cls = OrnsteinZernike.MeanSpherical()
 
@@ -54,7 +55,7 @@ end
 
 function phs_oz(pot)
     rho = 0.8
-    nrho = 100
+    nrho = 30
     p = OrnsteinZernike.Parameters(1.0, 6.0, rho, 2^11, nrho, 1.0)
     st = OrnsteinZernike.Structure(p, pot)
     cls = OrnsteinZernike.ModifiedVerlet()
