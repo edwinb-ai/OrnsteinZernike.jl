@@ -1,15 +1,3 @@
-function oz_hs(br)
-    rho = 0.8
-    nrho = 30
-    p = OrnsteinZernike.Parameters(1.0, 8.0, rho, 2^11, nrho, 1.0)
-    pot = OrnsteinZernike.HardSphere()
-    st = OrnsteinZernike.Structure(p, pot)
-    inter = OrnsteinZernike.Interaction(p, st, br)
-    result = OrnsteinZernike.solve(inter)
-
-    return result
-end
-
 @testset "Parameters" begin
     brs = Dict(
         "Default" => ModifiedVerlet(),
@@ -24,7 +12,7 @@ end
             else
                 first_contact = maximum(result.gr)
             end
-            @show "MV parameters" first_contact
+            @show "$k" first_contact
             # We don't know exactly the value at contact, so just check that it is a valid number
             @test first_contact isa Real
         end
